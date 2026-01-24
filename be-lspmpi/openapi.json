@@ -1,0 +1,936 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Lemdiklat Permapendis API",
+    "version": "1.0.0",
+    "description": "Complete API for Lemdiklat Permapendis system"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "API base path"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate user and create session cookie",
+        "operationId": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LoginResponse" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User registration",
+        "description": "Create new user account",
+        "operationId": "Register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User logout",
+        "description": "Clear user session cookie",
+        "operationId": "Logout",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Change user password",
+        "description": "Update current user password",
+        "operationId": "ChangePassword",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChangePasswordRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Forgot password",
+        "description": "Send password reset instructions to email",
+        "operationId": "ForgotPassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "format": "email"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset instructions sent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ServiceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current user",
+        "description": "Get authenticated user information from cookie",
+        "operationId": "GetCurrentUser",
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user information",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClaimUser" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/users/find": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Find users",
+        "description": "Search users with criteria",
+        "operationId": "FindUsers",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FindRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Users found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get user by ID",
+        "description": "Retrieve user information by user ID",
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "404": { "description": "User not found" }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user profile",
+        "description": "Update user profile information",
+        "operationId": "UpdateUser",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserProfile" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "User updated successfully" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "description": "Delete user account",
+        "operationId": "DeleteUser",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "User deleted successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create new user",
+        "description": "Create a new user account (Admin and Manager only)",
+        "operationId": "CreateUser",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateUserRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "403": { "description": "Forbidden - insufficient permissions" }
+        }
+      }
+    },
+    "/users/profile-photo": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Upload profile photo",
+        "description": "Upload user profile photo",
+        "operationId": "UploadProfilePhoto",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["photo"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile photo uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PhotoUploadResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/users/profile-photo/{userId}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get profile photo",
+        "description": "Retrieve user profile photo",
+        "operationId": "GetProfilePhoto",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile photo retrieved successfully",
+            "content": {
+              "image/jpeg": { "schema": { "type": "string", "format": "binary" } },
+              "image/png": { "schema": { "type": "string", "format": "binary" } },
+              "image/webp": { "schema": { "type": "string", "format": "binary" } },
+              "image/svg+xml": { "schema": { "type": "string", "format": "binary" } }
+            }
+          },
+          "400": { "description": "Bad request" },
+          "404": { "description": "Profile photo not found" }
+        }
+      }
+    },
+    "/articles/find": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "Find articles",
+        "description": "Search articles with criteria",
+        "operationId": "FindArticles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FindRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Articles found successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaginatedResponseArticle" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles/{id}": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "Get article by ID",
+        "description": "Retrieve article by ID",
+        "operationId": "GetArticle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Article" }
+              }
+            }
+          },
+          "404": { "description": "Article not found" }
+        }
+      },
+      "put": {
+        "tags": ["Articles"],
+        "summary": "Update article",
+        "description": "Update article information",
+        "operationId": "UpdateArticle",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateArticleDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Article updated successfully" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "delete": {
+        "tags": ["Articles"],
+        "summary": "Delete article",
+        "description": "Delete article and its thumbnail",
+        "operationId": "DeleteArticle",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Article deleted successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/articles": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "Create new article",
+        "description": "Create a new article with thumbnail filename",
+        "operationId": "CreateArticle",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateArticleDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Article created successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/articles/with-thumbnail": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "Create article with thumbnail",
+        "description": "Create a new article and upload thumbnail in one request",
+        "operationId": "CreateArticleWithThumbnail",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "content": { "type": "string" },
+                  "author": { "type": "string" },
+                  "categoryId": { "type": "integer", "format": "int32" },
+                  "thumbnailFile": { "type": "string", "format": "binary" }
+                },
+                "required": ["title", "categoryId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Article created successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/articles/thumbnail": {
+      "post": {
+        "tags": ["Articles"],
+        "summary": "Upload thumbnail",
+        "description": "Upload article thumbnail",
+        "operationId": "UploadThumbnail",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "thumbnail": { "type": "string", "format": "binary" }
+                },
+                "required": ["thumbnail"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thumbnail uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PhotoUploadResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/articles/thumbnail/{fileName}": {
+      "get": {
+        "tags": ["Articles"],
+        "summary": "Get thumbnail",
+        "description": "Retrieve article thumbnail",
+        "operationId": "GetThumbnail",
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thumbnail retrieved successfully",
+            "content": {
+              "image/jpeg": { "schema": { "type": "string", "format": "binary" } },
+              "image/png": { "schema": { "type": "string", "format": "binary" } },
+              "image/webp": { "schema": { "type": "string", "format": "binary" } }
+            }
+          },
+          "404": { "description": "Thumbnail not found" }
+        }
+      }
+    },
+    "/article-categories/find": {
+      "post": {
+        "tags": ["Article Categories"],
+        "summary": "Find article categories",
+        "description": "Search article categories with criteria",
+        "operationId": "FindArticleCategories",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FindRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Article categories found successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaginatedResponseArticleCategory" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/article-categories": {
+      "get": {
+        "tags": ["Article Categories"],
+        "summary": "Get all article categories",
+        "description": "Retrieve all article categories",
+        "operationId": "GetAllArticleCategories",
+        "responses": {
+          "200": {
+            "description": "All article categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ArticleCategory" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Article Categories"],
+        "summary": "Create new article category",
+        "description": "Create a new article category",
+        "operationId": "CreateArticleCategory",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateArticleCategoryDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Article category created successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/article-categories/{id}": {
+      "get": {
+        "tags": ["Article Categories"],
+        "summary": "Get article category by ID",
+        "description": "Retrieve article category by ID",
+        "operationId": "GetArticleCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ArticleCategory" }
+              }
+            }
+          },
+          "404": { "description": "Article category not found" }
+        }
+      },
+      "put": {
+        "tags": ["Article Categories"],
+        "summary": "Update article category",
+        "description": "Update article category information",
+        "operationId": "UpdateArticleCategory",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateArticleCategoryDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Article category updated successfully" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "delete": {
+        "tags": ["Article Categories"],
+        "summary": "Delete article category",
+        "description": "Delete article category",
+        "operationId": "DeleteArticleCategory",
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Article category deleted successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "auth"
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "isAuth": { "type": "boolean" }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "properties": {
+          "oldPassword": { "type": "string" },
+          "newPassword": { "type": "string" }
+        },
+        "required": ["oldPassword", "newPassword"]
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string" }
+        }
+      },
+      "ClaimUser": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "nullable": true },
+          "roleId": { "type": "integer", "format": "int32" },
+          "username": { "type": "string", "nullable": true },
+          "profileName": { "type": "string", "nullable": true }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "username": { "type": "string", "maxLength": 50 },
+          "password": { "type": "string", "maxLength": 255 },
+          "passwordSalt": { "type": "string", "maxLength": 255 },
+          "roleId": { "type": "integer", "format": "int32" },
+          "role": { "$ref": "#/components/schemas/Role" },
+          "userProfileId": { "type": "string", "format": "uuid" },
+          "userProfile": { "$ref": "#/components/schemas/UserProfile" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "isActivated": { "type": "boolean" }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "maxLength": 50, "nullable": true },
+          "level": { "type": "integer", "format": "int32" }
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "maxLength": 100 },
+          "email": { "type": "string", "maxLength": 255 },
+          "phone": { "type": "string", "maxLength": 20, "nullable": true },
+          "address": { "type": "string", "maxLength": 500, "nullable": true },
+          "city": { "type": "string", "maxLength": 100, "nullable": true },
+          "profilePicture": { "type": "string", "maxLength": 255, "nullable": true }
+        }
+      },
+      "CreateUserRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["name", "email", "username", "password"]
+      },
+      "PhotoUploadResponse": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      },
+      "Article": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "title": { "type": "string", "maxLength": 200 },
+          "slug": { "type": "string", "maxLength": 255 },
+          "content": { "type": "string" },
+          "author": { "type": "string", "maxLength": 100 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "isPublished": { "type": "boolean" },
+          "categoryId": { "type": "integer", "format": "int32" },
+          "thumbnail": { "type": "string", "maxLength": 255 }
+        }
+      },
+      "CreateArticleDto": {
+        "type": "object",
+        "required": ["title", "categoryId"],
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string", "nullable": true },
+          "author": { "type": "string", "nullable": true },
+          "categoryId": { "type": "integer", "format": "int32" },
+          "thumbnail": { "type": "string", "nullable": true }
+        }
+      },
+      "UpdateArticleDto": {
+        "type": "object",
+        "required": ["title", "categoryId"],
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string", "nullable": true },
+          "categoryId": { "type": "integer", "format": "int32" },
+          "thumbnail": { "type": "string", "nullable": true },
+          "isPublished": { "type": "boolean" }
+        }
+      },
+      "ArticleCategory": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" }
+        }
+      },
+      "CreateArticleCategoryDto": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" }
+        }
+      },
+      "UpdateArticleCategoryDto": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" }
+        }
+      },
+      "FindRequest": {
+        "type": "object",
+        "properties": {
+          "search": { "type": "string" },
+          "page": { "type": "integer", "format": "int32", "default": 1 },
+          "pageSize": { "type": "integer", "format": "int32", "default": 10 },
+          "sort": { "type": "string" },
+          "order": { "type": "string" },
+          "filter": { "type": "string" }
+        }
+      },
+      "PaginatedResponseArticle": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Article" }
+          },
+          "totalCount": { "type": "integer", "format": "int32" },
+          "page": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" }
+        }
+      },
+      "PaginatedResponseArticleCategory": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ArticleCategory" }
+          },
+          "totalCount": { "type": "integer", "format": "int32" },
+          "page": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" }
+        }
+      }
+    }
+  }
+}
