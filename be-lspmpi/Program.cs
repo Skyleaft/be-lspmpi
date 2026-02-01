@@ -144,6 +144,7 @@ app.MapAuthEndpoints();
 app.MapArticleEndpoints();
 app.MapArticleCategoryEndpoints();
 app.MapGet("/ping", () => $"Phoonk!! - {DateTime.Now}");
+app.MapGet("/api/ping", () => $"Phoonk!! - {DateTime.Now}");
 
 app.MapGet("/openapi.json", () => Results.File("openapi.json", "application/json"));
 
