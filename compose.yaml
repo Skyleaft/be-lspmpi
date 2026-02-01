@@ -1,6 +1,7 @@
 ﻿services:
   be-lspmpi:
     image: be-lspmpi
+    mem_limit: 328M
     build:
       context: .
       dockerfile: be-lspmpi/Dockerfile
@@ -22,10 +23,4 @@
       - Cookie__SameSite=Lax
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5001
-    networks:
-      - pgsql_pgsql
-    
-networks:
-  pgsql_pgsql:
-      
 
