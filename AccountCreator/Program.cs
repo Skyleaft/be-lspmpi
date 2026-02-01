@@ -96,9 +96,9 @@ static string HashPassword(string password, string salt)
     var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
     {
         Salt = saltBytes,
-        DegreeOfParallelism = 8,
-        Iterations = 4,
-        MemorySize = 1024 * 1024
+        DegreeOfParallelism = 1,
+        Iterations = 2,
+        MemorySize = 1024 * 64
     };
     var hash = argon2.GetBytes(16);
     return Convert.ToBase64String(saltBytes.Concat(hash).ToArray());

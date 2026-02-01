@@ -23,14 +23,14 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IArticleRepo, ArticleRepo>();
 builder.Services.AddScoped<IArticleCategoryRepo, ArticleCategoryRepo>();
 
-builder.Services.AddTransient<IEncryptionService, EncryptionService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IArticleService, ArticleService>();
-builder.Services.AddTransient<IArticleCategoryService, ArticleCategoryService>();
-builder.Services.AddTransient<IAvatarService, AvatarService>();
-builder.Services.AddTransient<IThumbnailService, ThumbnailService>();
-builder.Services.AddTransient<IClaimService, ClaimService>();
-builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IArticleCategoryService, ArticleCategoryService>();
+builder.Services.AddScoped<IAvatarService, AvatarService>();
+builder.Services.AddScoped<IThumbnailService, ThumbnailService>();
+builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddHttpContextAccessor();
 

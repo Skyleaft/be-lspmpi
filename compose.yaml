@@ -1,7 +1,7 @@
 ﻿services:
   be-lspmpi:
     image: be-lspmpi
-    mem_limit: 328M
+    mem_limit: 400M
     build:
       context: .
       dockerfile: be-lspmpi/Dockerfile
@@ -27,4 +27,7 @@
       - Serilog__MinimumLevel__Default=Debug
       - Serilog__MinimumLevel__Override__Microsoft=Information
       - Serilog__MinimumLevel__Override__System=Information
+      - DOTNET_GCServer=false
+      - DOTNET_GCConcurrent=true
+      - DOTNET_GCRetainVM=false
 
