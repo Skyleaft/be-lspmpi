@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=db_lspmpi;Username=user;Password=pas123"
+  }
+}

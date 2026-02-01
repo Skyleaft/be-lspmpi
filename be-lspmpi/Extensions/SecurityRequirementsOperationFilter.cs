@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Core.Systems
@@ -26,16 +25,12 @@ namespace Core.Systems
                 // Add security requirement for endpoints that need authorization
                 operation.Security = new List<OpenApiSecurityRequirement>
                 {
-                    new OpenApiSecurityRequirement
-                    {
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new() { Type = ReferenceType.SecurityScheme, Id = "Cookie" }
-                            },
-                            Array.Empty<string>()
-                        }
-                    }
+                    // new OpenApiSecurityRequirement
+                    // {
+                    //     {
+                    //         [new OpenApiSecuritySchemeReference("Cookie")] = []
+                    //     }
+                    // }
                 };
             }
         }

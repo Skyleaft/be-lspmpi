@@ -1,4 +1,4 @@
-﻿using be_lspmpi.Dto;
+using be_lspmpi.Dto;
 using be_lspmpi.Models;
 using be_lspmpi.Services;
 
@@ -103,7 +103,7 @@ namespace be_lspmpi.Endpoints
             .Produces(400)
             .Produces(401);
 
-            users.MapGet("/profile-photo/{userId}", async (string userId, IUserService userService) =>
+            users.MapMethods("/profile-photo/{userId}", ["GET", "HEAD"], async (string userId, IUserService userService, HttpContext context) =>
             {
                 if (!Guid.TryParse(userId, out var guid)) return Results.BadRequest();
 
@@ -121,6 +121,14 @@ namespace be_lspmpi.Endpoints
                     ".webp" => "image/webp",
                     _ => "application/octet-stream"
                 };
+
+                if (context.Request.Method == "HEAD")
+                {
+                    var fileInfo = new FileInfo(filePath);
+                    context.Response.Headers.ContentType = contentType;
+                    context.Response.Headers.ContentLength = fileInfo.Length;
+                    return Results.Ok();
+                }
 
                 return Results.File(filePath, contentType);
             })

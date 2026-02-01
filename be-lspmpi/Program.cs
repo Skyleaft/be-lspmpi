@@ -5,6 +5,7 @@ using be_lspmpi.Services;
 using Core.Systems;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,15 +93,18 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "Lemdiklat Permapendis API", Version = "v1" });
-    c.AddSecurityDefinition("Cookie", new()
+    c.SwaggerDoc("v1", new() { Title = "LSP MPI API", Version = "v1" });
+    c.AddSecurityDefinition("Cookie", new OpenApiSecurityScheme()
     {
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Cookie,
         Name = "Cookie",
         Description = "Cookie authentication"
     });
-    c.OperationFilter<SecurityRequirementsOperationFilter>();
+    c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Cookie", document)] = []
+    });
 
 });
 #endif
@@ -122,9 +126,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lemdiklat Permapendis API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LSP MPI API v1");
         c.RoutePrefix = "swagger";
-        c.DocumentTitle = "Lemdiklat Permapendis API Documentation";
+        c.DocumentTitle = "LSP MPI API Documentation";
     });
 }
 #endif
