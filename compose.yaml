@@ -23,6 +23,9 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5001
     networks:
-      pgsql
+      - pgsql_pgsql
+    
+networks:
+  pgsql_pgsql:
       
 
