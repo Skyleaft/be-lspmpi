@@ -1,3 +1,4 @@
 /AccountCreator/appsettings.json
 AccountCreator/bin
 AccountCreator/obj
+compose.override.yaml
