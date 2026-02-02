@@ -18,5 +18,6 @@ namespace be_lspmpi.Models
         public int CategoryId { get; set; }
         [MaxLength(255)]
         public string Thumbnail { get; set; }
+        public ICollection<ArticleTagMapping> ArticleTagMappings { get; set; } = new List<ArticleTagMapping>();
     }
 }

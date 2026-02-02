@@ -13,6 +13,8 @@ namespace be_lspmpi.Data
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
+        public DbSet<ArticleTag> ArticleTags { get; set; }
+        public DbSet<ArticleTagMapping> ArticleTagMappings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +47,22 @@ namespace be_lspmpi.Data
             modelBuilder.Entity<Article>(entity =>
             {
                 entity.HasKey(e => e.Id);
+            });
+
+            modelBuilder.Entity<ArticleTag>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+            });
+
+            modelBuilder.Entity<ArticleTagMapping>(entity =>
+            {
+                entity.HasKey(e => new { e.ArticleId, e.ArticleTagId });
+                entity.HasOne(e => e.Article)
+                      .WithMany(a => a.ArticleTagMappings)
+                      .HasForeignKey(e => e.ArticleId);
+                entity.HasOne(e => e.ArticleTag)
+                      .WithMany(t => t.ArticleTagMappings)
+                      .HasForeignKey(e => e.ArticleTagId);
             });
         }
     }

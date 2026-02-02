@@ -126,5 +126,35 @@ namespace be_lspmpi.Repositories
                 PageSize = request.PageSize
             };
         }
+
+        public async Task AddTags(int articleId, List<int> tagIds)
+        {
+            var mappings = tagIds.Select(tagId => new ArticleTagMapping
+            {
+                ArticleId = articleId,
+                ArticleTagId = tagId
+            }).ToList();
+
+            await db.ArticleTagMappings.AddRangeAsync(mappings);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task RemoveTags(int articleId, List<int> tagIds)
+        {
+            var mappings = await db.ArticleTagMappings
+                .Where(m => m.ArticleId == articleId && tagIds.Contains(m.ArticleTagId))
+                .ToListAsync();
+
+            db.ArticleTagMappings.RemoveRange(mappings);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task<List<ArticleTag>> GetArticleTags(int articleId)
+        {
+            return await db.ArticleTagMappings
+                .Where(m => m.ArticleId == articleId)
+                .Select(m => m.ArticleTag)
+                .ToListAsync();
+        }
     }
 }

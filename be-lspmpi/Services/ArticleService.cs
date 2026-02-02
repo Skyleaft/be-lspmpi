@@ -101,6 +101,43 @@ namespace be_lspmpi.Services
             return await articleRepo.Find(request);
         }
 
+        public async Task<ServiceResponse> AddTags(ArticleTagsDto dto)
+        {
+            try
+            {
+                var article = await articleRepo.Get(dto.ArticleId);
+                if (article == null)
+                {
+                    return new ServiceResponse { Success = false, Message = "Article not found" };
+                }
+
+                await articleRepo.AddTags(dto.ArticleId, dto.TagIds);
+                return new ServiceResponse { Success = true, Message = "Tags added successfully" };
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse { Success = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<ServiceResponse> RemoveTags(ArticleTagsDto dto)
+        {
+            try
+            {
+                await articleRepo.RemoveTags(dto.ArticleId, dto.TagIds);
+                return new ServiceResponse { Success = true, Message = "Tags removed successfully" };
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse { Success = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<List<ArticleTag>> GetArticleTags(int articleId)
+        {
+            return await articleRepo.GetArticleTags(articleId);
+        }
+
         private static string GenerateSlug(string title)
         {
             if (string.IsNullOrEmpty(title)) return string.Empty;

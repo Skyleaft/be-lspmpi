@@ -11,5 +11,8 @@ namespace be_lspmpi.Repositories
         Task<Article> Update(Article article);
         Task Delete(int id);
         Task<PaginatedResponse<Article>> Find(FindRequest request);
+        Task AddTags(int articleId, List<int> tagIds);
+        Task RemoveTags(int articleId, List<int> tagIds);
+        Task<List<ArticleTag>> GetArticleTags(int articleId);
     }
 }

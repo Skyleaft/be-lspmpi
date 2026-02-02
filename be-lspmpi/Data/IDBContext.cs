@@ -10,6 +10,8 @@ namespace be_lspmpi.Data
         DbSet<UserProfile> UserProfiles { get; set; }
         DbSet<Article> Articles { get; set; }
         DbSet<ArticleCategory> ArticleCategories { get; set; }
+        DbSet<ArticleTag> ArticleTags { get; set; }
+        DbSet<ArticleTagMapping> ArticleTagMappings { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

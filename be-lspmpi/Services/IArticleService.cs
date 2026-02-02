@@ -11,5 +11,8 @@ namespace be_lspmpi.Services
         Task<ServiceResponse> Update(int id, UpdateArticleDto articleDto);
         Task<ServiceResponse> Delete(int id);
         Task<PaginatedResponse<Article>> Find(FindRequest request);
+        Task<ServiceResponse> AddTags(ArticleTagsDto dto);
+        Task<ServiceResponse> RemoveTags(ArticleTagsDto dto);
+        Task<List<ArticleTag>> GetArticleTags(int articleId);
     }
 }

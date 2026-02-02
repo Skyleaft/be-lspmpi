@@ -153,6 +153,48 @@ namespace be_lspmpi.Endpoints
             .Produces(200)
             .Produces(404)
             .AllowAnonymous();
+
+            articles.MapGet("/{id}/tags", async (int id, IArticleService articleService) =>
+            {
+                var tags = await articleService.GetArticleTags(id);
+                return Results.Ok(tags);
+            })
+            .WithName("GetArticleTags")
+            .WithSummary("Get article tags")
+            .WithDescription("Get all tags for an article")
+            .Produces<List<ArticleTag>>(200)
+            .AllowAnonymous();
+            
+            articles.MapPost("/{id}/tags", async (int id, List<int> tagIds, IArticleService articleService) =>
+            {
+                var dto = new ArticleTagsDto { ArticleId = id, TagIds = tagIds };
+                var result = await articleService.AddTags(dto);
+                return result.Success ? Results.Ok(result.Message) : Results.BadRequest(result.Message);
+            })
+            .WithName("AddArticleTags")
+            .WithSummary("Add tags to article")
+            .WithDescription("Add multiple tags to an article")
+            .Produces(200)
+            .Produces(400)
+            .RequireAuthorization();
+            
+            articles.MapDelete("/{id}/tags", async (int id, HttpContext context, IArticleService articleService) =>
+            {
+                var tagIdsParam = context.Request.Query["tagIds"].ToString();
+                if (string.IsNullOrEmpty(tagIdsParam))
+                    return Results.BadRequest("tagIds parameter is required");
+                
+                var tagIds = tagIdsParam.Split(',').Select(int.Parse).ToList();
+                var dto = new ArticleTagsDto { ArticleId = id, TagIds = tagIds };
+                var result = await articleService.RemoveTags(dto);
+                return result.Success ? Results.Ok(result.Message) : Results.BadRequest(result.Message);
+            })
+            .WithName("RemoveArticleTags")
+            .WithSummary("Remove tags from article")
+            .WithDescription("Remove multiple tags from an article. Use ?tagIds=1,2,3 format")
+            .Produces(200)
+            .Produces(400)
+            .RequireAuthorization();
         }
     }
 }
