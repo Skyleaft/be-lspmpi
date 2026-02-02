@@ -17,7 +17,10 @@ namespace be_lspmpi.Services
             {
                 var category = new ArticleCategory
                 {
-                    Name = categoryDto.Name
+                    Name = categoryDto.Name,
+                    Description = categoryDto.Description,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
 
                 await categoryRepo.Create(category);
@@ -40,6 +43,8 @@ namespace be_lspmpi.Services
                 }
 
                 existing.Name = categoryDto.Name;
+                existing.Description = categoryDto.Description;
+                existing.UpdatedAt = DateTime.UtcNow;
                 await categoryRepo.Update(existing);
                 return new ServiceResponse { Success = true, Message = "Category updated successfully" };
             }

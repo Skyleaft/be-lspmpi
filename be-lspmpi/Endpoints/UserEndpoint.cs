@@ -15,7 +15,7 @@ namespace be_lspmpi.Endpoints
             .WithName("FindUsers")
             .WithSummary("Find users")
             .WithDescription("Search users with criteria")
-            .Produces<IEnumerable<Models.User>>(200);
+            .Produces<PaginatedResponse<User>>(200);
 
             users.MapGet("/{id}", async (string id, IUserService userService) =>
                 {

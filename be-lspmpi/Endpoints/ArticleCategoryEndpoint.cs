@@ -45,7 +45,7 @@ namespace be_lspmpi.Endpoints
             })
             .WithName("CreateArticleCategory")
             .WithSummary("Create new article category")
-            .WithDescription("Create a new article category")
+            .WithDescription("Create a new article category with name and description")
             .Produces(201)
             .Produces(400)
             .RequireAuthorization();
@@ -57,7 +57,7 @@ namespace be_lspmpi.Endpoints
             })
             .WithName("UpdateArticleCategory")
             .WithSummary("Update article category")
-            .WithDescription("Update article category information")
+            .WithDescription("Update article category name and description")
             .Produces(204)
             .Produces(400)
             .RequireAuthorization();

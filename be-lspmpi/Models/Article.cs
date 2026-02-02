@@ -16,6 +16,7 @@ namespace be_lspmpi.Models
         public DateTime UpdatedAt { get; set; }
         public bool IsPublished { get; set; }
         public int CategoryId { get; set; }
+        public ArticleCategory Category { get; set; }
         [MaxLength(255)]
         public string Thumbnail { get; set; }
         public ICollection<ArticleTagMapping> ArticleTagMappings { get; set; } = new List<ArticleTagMapping>();

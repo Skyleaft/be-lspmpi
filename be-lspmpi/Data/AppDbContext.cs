@@ -47,6 +47,14 @@ namespace be_lspmpi.Data
             modelBuilder.Entity<Article>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.HasOne(e => e.Category)
+                      .WithMany(c => c.Articles)
+                      .HasForeignKey(e => e.CategoryId);
+            });
+
+            modelBuilder.Entity<ArticleCategory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
             });
 
             modelBuilder.Entity<ArticleTag>(entity =>

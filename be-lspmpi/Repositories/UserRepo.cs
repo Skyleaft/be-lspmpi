@@ -73,7 +73,7 @@ namespace be_lspmpi.Repositories
 
         public async Task<PaginatedResponse<User>> Find(FindRequest request)
         {
-            var query = db.Users.Include(x => x.UserProfile).AsQueryable();
+            var query = db.Users.Include(x => x.UserProfile).Include(y=>y.Role).AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Search))
             {
