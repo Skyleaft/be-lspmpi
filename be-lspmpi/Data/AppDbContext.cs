@@ -15,6 +15,7 @@ namespace be_lspmpi.Data
         public DbSet<ArticleCategory> ArticleCategories { get; set; }
         public DbSet<ArticleTag> ArticleTags { get; set; }
         public DbSet<ArticleTagMapping> ArticleTagMappings { get; set; }
+        public DbSet<CompetencySchema> CompetencySchemas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +72,15 @@ namespace be_lspmpi.Data
                 entity.HasOne(e => e.ArticleTag)
                       .WithMany(t => t.ArticleTagMappings)
                       .HasForeignKey(e => e.ArticleTagId);
+            });
+
+            modelBuilder.Entity<CompetencySchema>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Competencies)
+                      .HasConversion(
+                          v => string.Join(',', v),
+                          v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
             });
         }
     }

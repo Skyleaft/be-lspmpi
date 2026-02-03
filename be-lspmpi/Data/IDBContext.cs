@@ -12,6 +12,7 @@ namespace be_lspmpi.Data
         DbSet<ArticleCategory> ArticleCategories { get; set; }
         DbSet<ArticleTag> ArticleTags { get; set; }
         DbSet<ArticleTagMapping> ArticleTagMappings { get; set; }
+        DbSet<CompetencySchema> CompetencySchemas { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

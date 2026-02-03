@@ -23,12 +23,14 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IArticleRepo, ArticleRepo>();
 builder.Services.AddScoped<IArticleCategoryRepo, ArticleCategoryRepo>();
 builder.Services.AddScoped<IArticleTagRepo, ArticleTagRepo>();
+builder.Services.AddScoped<ICompetencySchemaRepository, CompetencySchemaRepository>();
 
 builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 builder.Services.AddScoped<IArticleCategoryService, ArticleCategoryService>();
 builder.Services.AddScoped<IArticleTagService, ArticleTagService>();
+builder.Services.AddScoped<ICompetencySchemaService, CompetencySchemaService>();
 builder.Services.AddScoped<IAvatarService, AvatarService>();
 builder.Services.AddScoped<IThumbnailService, ThumbnailService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
@@ -152,6 +154,7 @@ app.MapAuthEndpoints();
 app.MapArticleEndpoints();
 app.MapArticleCategoryEndpoints();
 app.MapArticleTagEndpoints();
+app.MapCompetencySchemaEndpoints();
 app.MapGet("/ping", () => $"Phoonk!! - {DateTime.Now}");
 app.MapGet("/api/ping", () => $"Phoonk!! - {DateTime.Now}");
 
