@@ -11,7 +11,29 @@ namespace be_lspmpi.Endpoints
             var articles = app.MapGroup("/api/articles").WithTags("Articles");
 
             articles.MapPost("/find", async (FindRequest request, IArticleService articleService) =>
-                await articleService.Find(request))
+            {
+                var result = await articleService.Find(request);
+                return Results.Ok(new
+                {
+                    result.TotalCount,
+                    result.Page,
+                    result.PageSize,
+                    Data = result.Data.Select(a => new
+                    {
+                        a.Id,
+                        a.Title,
+                        a.Content,
+                        a.Author,
+                        a.Slug,
+                        a.Thumbnail,
+                        a.IsPublished,
+                        a.CreatedAt,
+                        a.UpdatedAt,
+                        Category = a.Category != null ? new { a.Category.Id, a.Category.Name } : null,
+                        Tags = a.ArticleTagMappings?.Select(m => new { m.ArticleTag.Id, m.ArticleTag.Name }).ToList()
+                    })
+                });
+            })
             .WithName("FindArticles")
             .WithSummary("Find articles")
             .WithDescription("Search articles with criteria")
