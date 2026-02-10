@@ -54,7 +54,11 @@ namespace be_lspmpi.Repositories
 
         public async Task<PaginatedResponse<Article>> Find(FindRequest request)
         {
-            var query = db.Articles.AsQueryable();
+            var query = db.Articles
+                .Include(a => a.Category)
+                .Include(a => a.ArticleTagMappings)
+                    .ThenInclude(m => m.ArticleTag)
+                .AsQueryable();
 
             // Search filter
             if (!string.IsNullOrEmpty(request.Search))
@@ -79,6 +83,16 @@ namespace be_lspmpi.Repositories
                             case "categoryid":
                                 if (int.TryParse(value, out int categoryId))
                                     query = query.Where(x => x.CategoryId == categoryId);
+                                break;
+                            case "category":
+                                query = query.Where(x => x.Category.Name.Contains(value));
+                                break;
+                            case "tagid":
+                                if (int.TryParse(value, out int tagId))
+                                    query = query.Where(x => x.ArticleTagMappings.Any(m => m.ArticleTagId == tagId));
+                                break;
+                            case "tag":
+                                query = query.Where(x => x.ArticleTagMappings.Any(m => m.ArticleTag.Name.Contains(value)));
                                 break;
                             case "ispublished":
                                 if (bool.TryParse(value, out bool isPublished))
@@ -154,6 +168,32 @@ namespace be_lspmpi.Repositories
             return await db.ArticleTagMappings
                 .Where(m => m.ArticleId == articleId)
                 .Select(m => m.ArticleTag)
+                .ToListAsync();
+        }
+
+        public async Task<List<Article>> GetLatest(int count)
+        {
+            return await db.Articles
+                .Include(a => a.Category)
+                .Include(a => a.ArticleTagMappings)
+                    .ThenInclude(m => m.ArticleTag)
+                .OrderByDescending(a => a.CreatedAt)
+                .Take(count)
+                .Select(a => new Article
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    Content = a.Content.Length > 200 ? a.Content.Substring(0, 200) : a.Content,
+                    Author = a.Author,
+                    Slug = a.Slug,
+                    Thumbnail = a.Thumbnail,
+                    IsPublished = a.IsPublished,
+                    CategoryId = a.CategoryId,
+                    CreatedAt = a.CreatedAt,
+                    UpdatedAt = a.UpdatedAt,
+                    Category = a.Category,
+                    ArticleTagMappings = a.ArticleTagMappings
+                })
                 .ToListAsync();
         }
     }

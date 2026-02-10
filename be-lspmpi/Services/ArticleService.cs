@@ -138,6 +138,12 @@ namespace be_lspmpi.Services
             return await articleRepo.GetArticleTags(articleId);
         }
 
+        public async Task<List<Article>> GetLatest()
+        {
+            //get from sysparam
+            return await articleRepo.GetLatest(3);
+        }
+
         private static string GenerateSlug(string title)
         {
             if (string.IsNullOrEmpty(title)) return string.Empty;

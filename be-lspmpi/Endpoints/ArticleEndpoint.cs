@@ -17,6 +17,30 @@ namespace be_lspmpi.Endpoints
             .WithDescription("Search articles with criteria")
             .Produces<PaginatedResponse<Article>>(200)
             .AllowAnonymous();
+            
+            articles.MapGet("/latest", async (IArticleService articleService) =>
+                {
+                    var articles = await articleService.GetLatest();
+                    return Results.Ok(articles.Select(a => new
+                    {
+                        a.Id,
+                        a.Title,
+                        a.Content,
+                        a.Author,
+                        a.Slug,
+                        a.Thumbnail,
+                        a.IsPublished,
+                        a.CreatedAt,
+                        a.UpdatedAt,
+                        Category = a.Category != null ? new { a.Category.Id, a.Category.Name } : null,
+                        Tags = a.ArticleTagMappings?.Select(m => new { m.ArticleTag.Id, m.ArticleTag.Name }).ToList()
+                    }));
+                })
+                .WithName("GetLatest Article")
+                .WithSummary("GetLatest Article")
+                .WithDescription("Retrieve Latest Article")
+                .Produces<List<Article>>(200)
+                .AllowAnonymous();
 
             articles.MapGet("/{id}", async (int id, IArticleService articleService) =>
                 {

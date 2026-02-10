@@ -14,5 +14,6 @@ namespace be_lspmpi.Repositories
         Task AddTags(int articleId, List<int> tagIds);
         Task RemoveTags(int articleId, List<int> tagIds);
         Task<List<ArticleTag>> GetArticleTags(int articleId);
+        Task<List<Article>> GetLatest(int count);
     }
 }

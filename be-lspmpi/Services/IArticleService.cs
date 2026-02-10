@@ -14,5 +14,6 @@ namespace be_lspmpi.Services
         Task<ServiceResponse> AddTags(ArticleTagsDto dto);
         Task<ServiceResponse> RemoveTags(ArticleTagsDto dto);
         Task<List<ArticleTag>> GetArticleTags(int articleId);
+        Task<List<Article>> GetLatest();
     }
 }
