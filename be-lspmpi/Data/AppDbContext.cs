@@ -16,6 +16,7 @@ namespace be_lspmpi.Data
         public DbSet<ArticleTag> ArticleTags { get; set; }
         public DbSet<ArticleTagMapping> ArticleTagMappings { get; set; }
         public DbSet<CompetencySchema> CompetencySchemas { get; set; }
+        public DbSet<WebSetting> WebSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,6 +82,11 @@ namespace be_lspmpi.Data
                       .HasConversion(
                           v => string.Join(',', v),
                           v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
+            });
+
+            modelBuilder.Entity<WebSetting>(entity =>
+            {
+                entity.HasKey(e => e.Id);
             });
         }
     }
