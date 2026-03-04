@@ -30,7 +30,7 @@ namespace be_lspmpi.Services
                     Thumbnail = articleDto.Thumbnail,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
-                    IsPublished = false
+                    IsPublished = true
                 };
 
                 await articleRepo.Create(article);
