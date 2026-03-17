@@ -11,4 +11,5 @@ public interface ICompetencySchemaService
     Task<CompetencySchema> UpdateCompetencySchemaAsync(CompetencySchema competencySchema);
     Task<bool> DeleteCompetencySchemaAsync(int id);
     Task<PaginatedResponse<CompetencySchema>> FindCompetencySchemasAsync(FindRequest request);
+    Task<string> UploadImageUrlAsync(int id, IFormFile file);
 }

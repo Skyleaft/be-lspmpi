@@ -37,6 +37,7 @@ builder.Services.AddScoped<IThumbnailService, ThumbnailService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IWebSettingService, WebSettingService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -160,6 +161,47 @@ app.MapCompetencySchemaEndpoints();
 app.MapWebSettingEndpoints();
 app.MapGet("/ping", () => $"Phoonk!! - {DateTime.Now}");
 app.MapGet("/api/ping", () => $"Phoonk!! - {DateTime.Now}");
+
+app.MapPost("/api/upload/{subdir}", async (string subdir, IFormFile file, IFileService fileService) =>
+{
+    try
+    {
+        var path = await fileService.SaveImageAsync(file, subdir);
+        return Results.Ok(new { path });
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+})
+.WithName("UniversalUpload")
+.WithSummary("Universal image upload")
+.WithDescription("Upload an image to a specified subdirectory and convert to webp")
+.Produces(200)
+.Produces(400)
+.DisableAntiforgery()
+.RequireAuthorization();
+
+app.MapGet("/api/images/{*path}", (string path) =>
+{
+    var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+    var filePath = Path.Combine(uploadsDir, path);
+
+    if (!File.Exists(filePath))
+        return Results.NotFound();
+
+    var extension = Path.GetExtension(filePath).ToLowerInvariant();
+    var contentType = extension switch
+    {
+        ".webp" => "image/webp",
+        ".jpg" or ".jpeg" => "image/jpeg",
+        ".png" => "image/png",
+        ".svg" => "image/svg+xml",
+        _ => "application/octet-stream"
+    };
+
+    return Results.File(filePath, contentType);
+}).WithName("GetImage").AllowAnonymous();
 
 app.MapGet("/openapi.json", () => Results.File("openapi.json", "application/json"));
 

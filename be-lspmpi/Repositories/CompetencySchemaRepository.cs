@@ -38,7 +38,7 @@ public class CompetencySchemaRepository(IDBContext db) : ICompetencySchemaReposi
         existing.Duration = competencySchema.Duration;
         existing.Fee = competencySchema.Fee;
         existing.Competencies = competencySchema.Competencies;
-        existing.Image = competencySchema.Image;
+        existing.ImageUrl = competencySchema.ImageUrl;
         existing.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync();

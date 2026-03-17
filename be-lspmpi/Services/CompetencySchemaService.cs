@@ -1,16 +1,20 @@
 using be_lspmpi.Models;
 using be_lspmpi.Repositories;
 using be_lspmpi.Dto;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace be_lspmpi.Services;
 
 public class CompetencySchemaService : ICompetencySchemaService
 {
     private readonly ICompetencySchemaRepository _repository;
+    private readonly IFileService _fileService;
 
-    public CompetencySchemaService(ICompetencySchemaRepository repository)
+    public CompetencySchemaService(ICompetencySchemaRepository repository, IFileService fileService)
     {
         _repository = repository;
+        _fileService = fileService;
     }
 
     public async Task<IEnumerable<CompetencySchema>> GetAllCompetencySchemasAsync()
@@ -56,7 +60,14 @@ public class CompetencySchemaService : ICompetencySchemaService
         if (id <= 0)
             throw new ArgumentException("Id must be greater than 0");
 
-        return await _repository.DeleteAsync(id);
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing != null)
+        {
+            _fileService.DeleteFile(existing.ImageUrl);
+            return await _repository.DeleteAsync(id);
+        }
+
+        return false;
     }
 
     public async Task<PaginatedResponse<CompetencySchema>> FindCompetencySchemasAsync(FindRequest request)
@@ -68,5 +79,23 @@ public class CompetencySchemaService : ICompetencySchemaService
             request.PageSize = 10;
 
         return await _repository.Find(request);
+    }
+
+    public async Task<string> UploadImageUrlAsync(int id, IFormFile file)
+    {
+        var existing = await _repository.GetByIdAsync(id);
+        if (existing == null)
+            throw new ArgumentException("Competency schema not found");
+
+        // Delete old image if it exists
+        _fileService.DeleteFile(existing.ImageUrl);
+
+        // Save new image
+        var relativePath = await _fileService.SaveImageAsync(file, "competency-schemas");
+
+        existing.ImageUrl = relativePath;
+        await _repository.UpdateAsync(existing);
+
+        return relativePath;
     }
 }

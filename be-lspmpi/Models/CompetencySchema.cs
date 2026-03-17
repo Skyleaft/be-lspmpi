@@ -1,4 +1,4 @@
-﻿namespace be_lspmpi.Models;
+namespace be_lspmpi.Models;
 
 public class CompetencySchema
 {
@@ -8,7 +8,7 @@ public class CompetencySchema
     public string Duration { get; set; } = string.Empty;
     public decimal Fee { get; set; }
     public List<string> Competencies { get; set; } = new List<string>();
-    public string Image { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
